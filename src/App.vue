@@ -1,37 +1,21 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
   <div id="app">
-    <nav class="navbar">
-      <div class="nav-container">
-        <RouterLink to="/" class="nav-logo">我的博客</RouterLink>
-        <ul class="nav-menu">
-          <li class="nav-item">
-            <RouterLink to="/" class="nav-link">首页</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink to="/about" class="nav-link">关于</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink to="/contact" class="nav-link">联系</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink to="/categories" class="nav-link">分类</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink to="/manage" class="nav-link">管理文章</RouterLink>
-          </li>
+    <header class="header">
+      <div class="header-container">
+        <h1 class="logo">在线M3U8播放器</h1>
       </div>
-    </nav>
+    </header>
 
     <main>
       <RouterView />
     </main>
 
     <footer class="footer">
-      <p>&copy; 2025 我的博客. 版权所有.</p>
+      <p>&copy; 2025 在线M3U8播放器. 版权所有.</p>
     </footer>
   </div>
 </template>
@@ -55,7 +39,7 @@ body {
   flex-direction: column;
 }
 
-.navbar {
+.header {
   background: linear-gradient(90deg, #343a40 0%, #495057 100%);
   padding: 1rem 0;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -64,65 +48,20 @@ body {
   z-index: 100;
 }
 
-.nav-container {
+.header-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 0 2rem;
 }
 
-.nav-logo {
+.logo {
   color: #ffffff;
   font-size: 1.8rem;
   font-weight: bold;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-}
-
-.nav-logo i {
-  margin-right: 0.5rem;
-}
-
-.nav-menu {
-  display: flex;
-  list-style: none;
-}
-
-.nav-item {
-  margin-left: 2rem;
-}
-
-.nav-link {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: -5px;
-  left: 0;
-  background-color: #4da0ff;
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-  width: 100%;
+  text-align: center;
 }
 
 main {
@@ -147,19 +86,8 @@ main {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .nav-container {
-    flex-direction: column;
+  .header-container {
     padding: 1rem;
-  }
-  
-  .nav-menu {
-    margin: 1rem 0;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .nav-item {
-    margin: 0.5rem;
   }
   
   main {

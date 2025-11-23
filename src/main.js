@@ -2,23 +2,11 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 
-// Import components
-import Home from './components/Home.vue'
-import About from './components/About.vue'
-import Contact from './components/Contact.vue'
-import BlogPost from './components/BlogPost.vue'
-import Category from './components/Category.vue'
-import Search from './components/Search.vue'
-import PostManager from './components/PostManager.vue'
+// Import M3U8 Player component
+import M3U8Player from './components/M3U8Player.vue'
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/about', component: About },
-  { path: '/contact', component: Contact },
-  { path: '/post/:id', name: 'BlogPost', component: BlogPost, props: true },
-  { path: '/categories', component: Category },
-  { path: '/search', component: Search },
-  { path: '/manage', component: PostManager }
+  { path: '/', component: M3U8Player },
 ]
 
 const router = createRouter({

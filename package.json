@@ -1,0 +1,17 @@
+{
+  "name": "minecraft-style-webgl-game",
+  "version": "1.0.0",
+  "description": "A Minecraft-style 3D game with multiplayer support using WebGL",
+  "main": "WebSocketServer.js",
+  "scripts": {
+    "start": "node WebSocketServer.js",
+    "server": "node WebSocketServer.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["game", "webgl", "minecraft", "multiplayer"],
+  "author": "Game Developer",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  }
+}

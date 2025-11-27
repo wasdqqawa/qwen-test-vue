@@ -11,7 +11,7 @@
             padding: 0; 
             overflow: hidden; 
             background: #000; 
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', monospace;
         }
         #gameContainer { 
             position: absolute; 
@@ -37,6 +37,7 @@
         #loadingScreen h1 {
             font-size: 2em;
             margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff00;
         }
         #progressBar {
             width: 80%;
@@ -62,6 +63,143 @@
             font-size: 14px;
             max-width: 400px;
         }
+        
+        /* Minecraft-style main menu */
+        #mainMenu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #2c3e50, #1a1a2e);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            color: white;
+        }
+        
+        .menu-title {
+            font-size: 3em;
+            margin-bottom: 50px;
+            text-shadow: 0 0 10px #00ff00;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .menu-button {
+            width: 300px;
+            padding: 15px 0;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #2E7D32;
+        }
+        
+        .menu-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #2E7D32;
+        }
+        
+        .menu-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #2E7D32;
+        }
+        
+        .menu-button.quit {
+            background: #f44336;
+            box-shadow: 0 4px 0 #c62828;
+        }
+        
+        .menu-button.quit:hover {
+            background: #e53935;
+            box-shadow: 0 6px 0 #c62828;
+        }
+        
+        .menu-button.quit:active {
+            box-shadow: 0 2px 0 #c62828;
+        }
+        
+        /* Multiplayer menu */
+        #multiplayerMenu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            z-index: 201;
+            display: none;
+            min-width: 400px;
+        }
+        
+        #multiplayerMenu h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        .multiplayer-options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .multiplayer-input-group {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .multiplayer-input-group input {
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: none;
+            width: 180px;
+            flex-grow: 1;
+        }
+        
+        .multiplayer-input-group button {
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #9E9E9E;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -74,18 +212,26 @@
             <p>Loading game...</p>
         </div>
         
-        <!-- Network Connection Panel -->
-        <div id="connectionPanel" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 30px; border-radius: 10px; z-index: 200; display: block;">
-            <h2 style="text-align: center; margin-top: 0;">Game Mode</h2>
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <button id="singlePlayerButton" style="padding: 10px 20px; margin: 10px; background: #9E9E9E; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Single Player</button>
-                <button id="hostButton" style="padding: 10px 20px; margin: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Host Multiplayer</button>
-                <div style="display: flex; align-items: center; margin: 10px;">
-                    <input type="text" id="roomIdInput" placeholder="Enter Room ID" style="padding: 10px; margin-right: 10px; border-radius: 5px; border: none; width: 200px;">
-                    <button id="joinButton" style="padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Join Game</button>
+        <!-- Minecraft-style Main Menu -->
+        <div id="mainMenu">
+            <h1 class="menu-title">BLOCK WORLDS</h1>
+            <div class="menu-buttons">
+                <button id="singlePlayerButton" class="menu-button">Single Player</button>
+                <button id="multiplayerButton" class="menu-button">Multiplayer</button>
+                <button id="quitButton" class="menu-button quit">Quit</button>
+            </div>
+        </div>
+        
+        <!-- Multiplayer Menu -->
+        <div id="multiplayerMenu">
+            <h2>Multiplayer</h2>
+            <div class="multiplayer-options">
+                <button id="hostButton" class="menu-button" style="width: 100%;">Create Game</button>
+                <div class="multiplayer-input-group">
+                    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+                    <button id="joinButton" class="menu-button">Join Game</button>
                 </div>
-                <div id="connectionStatus" style="margin-top: 15px; text-align: center;">Not Connected</div>
-                <div id="playerCount" style="margin-top: 5px; text-align: center;">Players: 0</div>
+                <button id="backButton" class="back-button">Back</button>
             </div>
         </div>
         
@@ -122,8 +268,8 @@
             }, 1000);
         });
         
-        // WebRTC Network Functions - 使用原生WebRTC API以确保Firefox兼容性
-        let webRTCManager = null;
+        // WebSocket Network Functions
+        let webSocket = null;
         let unityInstance = null;
         
         // 设置Unity实例（当Unity WebGL构建加载时）
@@ -138,222 +284,54 @@
             }
         };
         
-        // 初始化WebRTC - 使用原生API
-        function initWebRTC() {
-            // 检查浏览器WebRTC支持
-            if (!window.RTCPeerConnection || !window.RTCDataChannel) {
-                console.error("WebRTC not supported by this browser");
-                return false;
-            }
-            
-            // 创建一个兼容Firefox和Chrome的WebRTC实现
-            webRTCManager = {
-                connection: null,
-                isHost: false,
-                roomId: null,
-                peers: {},
-                dataChannels: {},
-                
-                // 初始化连接
-                init: function() {
-                    // 使用兼容性更好的配置
-                    const config = {
-                        iceServers: [
-                            { urls: "stun:stun.l.google.com:19302" },
-                            { urls: "stun:stun1.l.google.com:19302" },
-                            { urls: "stun:stun2.l.google.com:19302" }
-                        ]
-                    };
-                    
-                    this.connection = new RTCPeerConnection(config);
-                    
-                    // 创建数据通道
-                    const dataChannel = this.connection.createDataChannel("data", {
-                        ordered: true,
-                        maxRetransmits: 10
-                    });
-                    
-                    this.setupDataChannel(dataChannel);
-                    this.setupConnectionEvents();
-                    
-                    return true;
-                },
-                
-                // 设置数据通道事件
-                setupDataChannel: function(channel) {
-                    const self = this;
-                    
-                    channel.onopen = function() {
-                        console.log("Data channel opened");
-                    };
-                    
-                    channel.onclose = function() {
-                        console.log("Data channel closed");
-                    };
-                    
-                    channel.onerror = function(err) {
-                        console.error("Data channel error:", err);
-                    };
-                    
-                    channel.onmessage = function(event) {
-                        // 将接收到的消息传递给Unity
-                        if (window.unityInstance) {
-                            window.unityInstance.SendMessage('WebRTCNetworkManager', 'OnWebRTCMessage', event.data);
-                        }
-                    };
-                    
-                    this.dataChannels["default"] = channel;
-                },
-                
-                // 设置连接事件
-                setupConnectionEvents: function() {
-                    const self = this;
-                    
-                    this.connection.ondatachannel = function(event) {
-                        const channel = event.channel;
-                        self.setupDataChannel(channel);
-                    };
-                    
-                    this.connection.onicecandidate = function(event) {
-                        if (event.candidate) {
-                            // 发送ICE候选者
-                            self.sendSignal({
-                                type: "ice-candidate",
-                                candidate: event.candidate
-                            });
-                        }
-                    };
-                    
-                    this.connection.onconnectionstatechange = function() {
-                        console.log("Connection state:", self.connection.connectionState);
-                    };
-                    
-                    this.connection.oniceconnectionstatechange = function() {
-                        console.log("ICE connection state:", self.connection.iceConnectionState);
-                    };
-                },
-                
-                // 发送信号消息
-                sendSignal: function(message) {
-                    // 这里需要实现信令服务器通信
-                    // 暂时使用本地模拟
-                    console.log("Signal message:", message);
-                },
-                
-                // 创建房间
-                createRoom: function(roomId) {
-                    this.isHost = true;
-                    this.roomId = roomId;
-                    console.log("Created room: " + roomId);
-                    return true;
-                },
-                
-                // 加入房间
-                joinRoom: function(roomId) {
-                    this.isHost = false;
-                    this.roomId = roomId;
-                    console.log("Joined room: " + roomId);
-                    return true;
-                },
-                
-                // 发送消息
-                sendMessage: function(message) {
-                    const channel = this.dataChannels["default"];
-                    if (channel && channel.readyState === "open") {
-                        channel.send(message);
-                        return true;
-                    }
-                    console.error("Data channel not open");
-                    return false;
-                },
-                
-                // 检查连接状态
-                isConnected: function() {
-                    return this.connection && 
-                           (this.connection.connectionState === "connected" || 
-                            this.connection.connectionState === "connecting");
-                },
-                
-                // 获取对等方数量
-                getPeerCount: function() {
-                    return Object.keys(this.peers).length;
+        // 初始化WebSocket连接
+        function connectWebSocket(mode, roomId = '') {
+            try {
+                let url = 'ws://localhost:8080';
+                if (roomId) {
+                    url += '?roomId=' + roomId + '&playerId=' + generatePlayerId() + '&mode=' + mode;
+                } else {
+                    url += '?playerId=' + generatePlayerId() + '&mode=' + mode;
                 }
-            };
-            
-            // 初始化WebRTC管理器
-            if (webRTCManager.init()) {
-                console.log("WebRTC Initialized");
+                
+                webSocket = new WebSocket(url);
+                
+                webSocket.onopen = function(event) {
+                    console.log('WebSocket connected successfully');
+                    document.getElementById('connectionStatus').textContent = mode === 'host' ? 'Hosting Game' : 'Connected to Game';
+                };
+                
+                webSocket.onmessage = function(event) {
+                    // 将接收到的消息传递给Unity
+                    if (window.unityInstance) {
+                        window.unityInstance.SendMessage('WebSocketNetworkManager', 'OnWebSocketMessage', event.data);
+                    }
+                };
+                
+                webSocket.onclose = function(event) {
+                    console.log('WebSocket connection closed:', event.reason);
+                    document.getElementById('connectionStatus').textContent = 'Connection Lost';
+                };
+                
+                webSocket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    document.getElementById('connectionStatus').textContent = 'Connection Error';
+                };
+                
                 return true;
-            }
-            
-            return false;
-        }
-        
-        // 创建房间（作为主机）
-        function createRoom() {
-            if (!webRTCManager) {
-                console.error("WebRTC not initialized");
+            } catch (e) {
+                console.error('Error connecting to WebSocket server:', e);
                 return false;
             }
-            
-            const roomId = "mc_" + Date.now().toString();
-            webRTCManager.createRoom(roomId);
-            console.log("Created room: " + roomId);
-            document.getElementById('connectionStatus').textContent = "Hosting Game: " + roomId;
-            document.getElementById('roomIdInput').value = roomId;
-            document.getElementById('connectionPanel').style.display = 'none';
-            
-            return true;
         }
         
-        // 加入房间
-        function joinRoom(roomId) {
-            if (!webRTCManager) {
-                console.error("WebRTC not initialized");
-                return false;
-            }
-            
-            webRTCManager.joinRoom(roomId);
-            console.log("Joined room: " + roomId);
-            document.getElementById('connectionStatus').textContent = "Joined Game: " + roomId;
-            document.getElementById('connectionPanel').style.display = 'none';
-            
-            return true;
+        function generatePlayerId() {
+            return 'player_' + Date.now().toString();
         }
         
-        // 发送数据消息
-        function sendWebRTCMessage(message) {
-            if (!webRTCManager) {
-                console.error("WebRTC not initialized");
-                return false;
-            }
-            
-            return webRTCManager.sendMessage(message);
-        }
-        
-        // 检查连接状态
-        function isWebRTCConnected() {
-            if (!webRTCManager) {
-                return false;
-            }
-            
-            return webRTCManager.isConnected();
-        }
-        
-        // 获取对等方数量
-        function getPeerCount() {
-            if (!webRTCManager) {
-                return 0;
-            }
-            
-            return webRTCManager.getPeerCount();
-        }
-        
-        // 单人游戏功能
+        // 启动单人游戏
         function startSinglePlayer() {
             console.log("Starting in single player mode");
-            document.getElementById('connectionStatus').textContent = "Single Player Mode";
-            document.getElementById('connectionPanel').style.display = 'none';
             
             // 通知Unity进入单人模式
             if (window.unityInstance) {
@@ -366,7 +344,58 @@
                     }
                 }, 1000);
             }
-            return true;
+            
+            // 隐藏菜单
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('multiplayerMenu').style.display = 'none';
+        }
+        
+        // 启动主机模式
+        function startHost() {
+            console.log("Starting as host");
+            
+            // 连接到WebSocket服务器作为主机
+            const roomId = 'mc_' + Date.now().toString();
+            if (connectWebSocket('host', roomId)) {
+                console.log("Created room: " + roomId);
+                
+                // 通知Unity启动主机模式
+                if (window.unityInstance) {
+                    window.unityInstance.SendMessage('WebSocketNetworkManager', 'StartHost', '');
+                }
+                
+                // 隐藏菜单
+                document.getElementById('mainMenu').style.display = 'none';
+                document.getElementById('multiplayerMenu').style.display = 'none';
+            } else {
+                alert("Failed to connect to server. Please make sure the WebSocket server is running.");
+                startSinglePlayer(); // Fallback to single player
+            }
+        }
+        
+        // 加入游戏
+        function joinGame(roomId) {
+            if (!roomId) {
+                alert("Please enter a Room ID");
+                return;
+            }
+            
+            console.log("Joining game: " + roomId);
+            
+            // 连接到WebSocket服务器作为客户端
+            if (connectWebSocket('join', roomId)) {
+                // 通知Unity加入游戏
+                if (window.unityInstance) {
+                    window.unityInstance.SendMessage('WebSocketNetworkManager', 'JoinGame', roomId);
+                }
+                
+                // 隐藏菜单
+                document.getElementById('mainMenu').style.display = 'none';
+                document.getElementById('multiplayerMenu').style.display = 'none';
+            } else {
+                alert("Failed to connect to server. Please make sure the WebSocket server is running and the Room ID is correct.");
+                startSinglePlayer(); // Fallback to single player
+            }
         }
         
         // 设置按钮事件
@@ -374,40 +403,30 @@
             startSinglePlayer();
         });
         
+        document.getElementById('multiplayerButton').addEventListener('click', function() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('multiplayerMenu').style.display = 'block';
+        });
+        
         document.getElementById('hostButton').addEventListener('click', function() {
-            if (initWebRTC()) {
-                createRoom();
-            } else {
-                // 如果WebRTC初始化失败，仍然可以进入单人模式
-                if (confirm("WebRTC initialization failed. Do you want to continue in single player mode?")) {
-                    startSinglePlayer();
-                }
-            }
+            startHost();
         });
         
         document.getElementById('joinButton').addEventListener('click', function() {
             const roomId = document.getElementById('roomIdInput').value.trim();
-            if (roomId) {
-                if (initWebRTC()) {
-                    joinRoom(roomId);
-                } else {
-                    // 如果WebRTC初始化失败，仍然可以进入单人模式
-                    if (confirm("WebRTC initialization failed. Do you want to continue in single player mode?")) {
-                        startSinglePlayer();
-                    }
-                }
-            } else {
-                alert("Please enter a Room ID");
-            }
+            joinGame(roomId);
         });
         
-        // 定期更新玩家数量
-        setInterval(function() {
-            if (webRTCManager && isWebRTCConnected()) {
-                const peerCount = getPeerCount();
-                document.getElementById('playerCount').textContent = "Players: " + (peerCount + 1); // +1 for local player
+        document.getElementById('backButton').addEventListener('click', function() {
+            document.getElementById('multiplayerMenu').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
+        });
+        
+        document.getElementById('quitButton').addEventListener('click', function() {
+            if (confirm("Are you sure you want to quit?")) {
+                window.close();
             }
-        }, 1000);
+        });
     </script>
 </body>
 </html>

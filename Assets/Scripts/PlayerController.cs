@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
         
         // 设置为本地玩家
         networkPlayerController.SetAsLocalPlayer();
-        networkPlayerController.SetPlayerId(WebRTCNetworkManager.Instance?.GetLocalPlayerId() ?? "local");
+        networkPlayerController.SetPlayerId(WebSocketNetworkManager.Instance?.GetLocalPlayerId() ?? "local");
     }
 
     void Update()
@@ -66,11 +66,11 @@ public class PlayerController : MonoBehaviour
         characterController.Move(moveDirection * Time.deltaTime);
         
         // 同步位置到网络
-        if (WebRTCNetworkManager.Instance != null && WebRTCNetworkManager.Instance.IsConnected())
+        if (WebSocketNetworkManager.Instance != null && WebSocketNetworkManager.Instance.IsConnected())
         {
             if (Time.time - lastPositionSyncTime >= positionSyncRate)
             {
-                WebRTCNetworkManager.Instance.SendPlayerPosition(transform.position, transform.eulerAngles);
+                WebSocketNetworkManager.Instance.SendPlayerPosition(transform.position, transform.eulerAngles);
                 lastPositionSyncTime = Time.time;
             }
         }

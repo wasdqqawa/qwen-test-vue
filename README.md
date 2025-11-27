@@ -1,110 +1,81 @@
-# Minecraft 克隆游戏
+# Minecraft-Style 3D WebGL Game (重构版)
 
-一个基于Unity 3D的WebGL实现的Minecraft风格游戏，支持方块放置/破坏、3D世界探索和基本的Minecraft功能。
+这是一个使用Unity开发的Minecraft风格3D WebGL游戏，支持单人和多人模式，使用WebSocket进行网络通信。
 
-## 功能特性
+## 特性
 
-- 🧱 **方块放置与破坏**: 点击鼠标左键破坏方块，右键放置方块
-- 🎮 **3D世界探索**: 支持自由移动、跳跃等基本操作
-- 🌍 **程序化世界生成**: 基于噪声算法生成的地形
-- 🎯 **第一人称视角**: 流畅的3D视角控制
-- 🌐 **WebGL兼容**: 可在浏览器中直接运行，支持GitHub Pages部署
-- 🧱 **多种方块类型**: 包含基岩、石头、泥土、草方块等
+- **Minecraft风格的3D世界** - 可以破坏和放置方块
+- **多人游戏支持** - 通过WebSocket实现的实时多人游戏
+- **Firefox兼容** - 使用WebSocket替代WebRTC，确保在Firefox等浏览器中正常运行
+- **主菜单界面** - 类似Minecraft的主菜单，可以选择单人或多人模式
 
-## 技术栈
+## 技术架构
 
-- [Unity 3D](https://unity.com/) - 3D游戏开发引擎
-- [C#](https://docs.microsoft.com/en-us/dotnet/csharp/) - 游戏逻辑编程语言
-- [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) - Web图形渲染技术
-- [Unity Physics](https://docs.unity3d.com/Manual/PhysicsSection.html) - 3D物理引擎
+- **前端**: Unity 3D游戏引擎，导出为WebGL
+- **网络**: WebSocket协议进行实时通信
+- **后端**: Node.js WebSocket服务器
 
-## 游戏操作
+## 运行说明
 
-- WASD 或 方向键 - 移动角色
-- 鼠标 - 控制视角
-- 空格键 - 跳跃
-- 鼠标左键 - 破坏方块
-- 鼠标右键 - 放置方块
+### 1. 启动WebSocket服务器
+
+```bash
+npm install
+npm start
+```
+
+或者
+
+```bash
+./start_server.sh
+```
+
+服务器将运行在 `ws://localhost:8080`
+
+### 2. 在浏览器中打开游戏
+
+打开 `index.html` 文件即可开始游戏。
+
+### 3. 游戏模式
+
+- **单人模式**: 直接在本地玩，无需网络连接
+- **多人模式**: 
+  - **创建游戏**: 作为主机创建一个房间
+  - **加入游戏**: 输入房间ID加入其他玩家的房间
+
+## 控制方式
+
+- **WASD/方向键**: 移动
+- **鼠标**: 视角控制
+- **空格键**: 跳跃
+- **左键**: 破坏方块
+- **右键**: 放置方块
+
+## 网络通信
+
+游戏使用WebSocket进行网络通信，支持以下消息类型：
+
+- 方块更新消息 (BlockUpdateMessage)
+- 玩家位置消息 (PlayerPositionMessage)
+
+## Firefox兼容性
+
+通过使用WebSocket替代WebRTC，确保了在Firefox浏览器中的兼容性。WebSocket是标准的Web API，在所有现代浏览器中都有良好支持。
 
 ## 项目结构
 
-```
-.
-├── Assets/                 # Unity项目资源
-│   ├── Scenes/            # 游戏场景
-│   ├── Scripts/           # C#脚本
-│   ├── Materials/         # 材质文件
-│   └── Textures/          # 纹理文件
-├── ProjectSettings/       # Unity项目设置
-├── Packages/              # Unity包管理
-├── README.md             # 项目说明
-└── index.html            # WebGL启动页面
-```
+- `index.html`: 主HTML页面，包含Minecraft风格的主菜单
+- `WebSocketServer.js`: WebSocket服务器实现
+- `start_server.sh`: 服务器启动脚本
+- `Assets/Scripts/`: Unity C#脚本
+  - `WebSocketNetworkManager.cs`: WebSocket网络管理器
+  - `NetworkUIManager.cs`: 网络UI管理器
+  - `MainMenuUI.cs`: 主菜单UI管理器
+  - `PlayerController.cs`: 玩家控制器
+  - `BlockInteraction.cs`: 方块交互逻辑
+  - `World.cs`: 世界生成和管理
+  - `BlockType.cs`: 方块类型定义
 
 ## 开发说明
 
-### 环境要求
-
-- Unity 2021.3 LTS 或更高版本
-- 支持WebGL构建模块
-
-### 本地开发
-
-1. 使用Unity Hub打开项目
-2. 选择Assets/Scenes/SampleScene场景
-3. 点击运行按钮进行测试
-
-### 构建WebGL版本
-
-1. 在Unity中选择 File → Build Settings
-2. 选择 WebGL 平台
-3. 点击 Build 按钮
-4. 部署生成的文件到Web服务器
-
-## 核心功能实现
-
-### 1. 玩家控制器 (PlayerController.cs)
-- 实现角色移动和重力系统
-- 处理跳跃和地面检测
-- 响应用户输入
-
-### 2. 世界生成器 (WorldGenerator.cs)
-- 使用Perlin噪声算法生成地形
-- 创建不同类型的方块（基岩、石头、泥土、草方块）
-- 管理方块材质和位置
-
-### 3. 方块交互 (BlockInteraction.cs)
-- 处理方块放置和破坏
-- 使用射线检测确定交互对象
-- 管理世界中的方块状态
-
-## 部署到GitHub Pages
-
-项目已配置为支持GitHub Pages部署：
-
-1. 构建WebGL版本
-2. 将构建结果上传到GitHub仓库
-3. 在GitHub仓库设置中启用GitHub Pages
-
-## 浏览器兼容性
-
-- Chrome 90+
-- Firefox 89+
-- Safari 14+
-- Edge 90+
-
-## 未来功能
-
-- 多人联机支持
-- 更多方块类型
-- 物品系统
-- 光照系统
-- 更复杂的地形生成
-
-## 贡献
-
-欢迎提交Issue和Pull Request来改进项目。
-
-## 许可证
-
-本项目采用 [MIT License](LICENSE) 许可证。
+此项目已重构为使用WebSocket替代WebRTC，以提供更好的浏览器兼容性（特别是Firefox）。网络架构设计为客户端-服务器模式，所有玩家通过中央WebSocket服务器进行通信。

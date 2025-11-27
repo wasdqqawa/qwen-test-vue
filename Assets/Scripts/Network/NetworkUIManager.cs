@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class NetworkUIManager : MonoBehaviour
 {
     [Header("UI Elements")]
-    public GameObject connectionPanel;
+    public GameObject connectionPanel;  // 现在由HTML主菜单处理，但仍保留以兼容性
     public Button hostButton;
     public Button joinButton;
     public Button singlePlayerButton;  // 添加单人模式按钮
@@ -20,16 +20,16 @@ public class NetworkUIManager : MonoBehaviour
 
     void Start()
     {
-        InitializeUI();
+        // 现在连接面板由HTML主菜单处理，所以默认隐藏Unity中的连接面板
+        if (connectionPanel != null) connectionPanel.SetActive(false);
+        
+        // 初始化游戏UI
+        if (gameUI != null) gameUI.SetActive(true);
+        if (statusText != null) statusText.text = "Connected";
+        if (playerCountText != null) playerCountText.text = "Players: 1";
+        
+        // 初始化按钮回调（保留以支持直接从场景启动）
         SetupButtonCallbacks();
-    }
-
-    void InitializeUI()
-    {
-        if (connectionPanel != null) connectionPanel.SetActive(true);
-        if (gameUI != null) gameUI.SetActive(false);
-        if (statusText != null) statusText.text = "Not Connected";
-        if (playerCountText != null) playerCountText.text = "Players: 0";
     }
 
     void SetupButtonCallbacks()
@@ -52,9 +52,9 @@ public class NetworkUIManager : MonoBehaviour
 
     void OnHostButtonClicked()
     {
-        if (WebRTCNetworkManager.Instance != null)
+        if (WebSocketNetworkManager.Instance != null)
         {
-            WebRTCNetworkManager.Instance.StartHost();
+            WebSocketNetworkManager.Instance.StartHost();
             isConnected = true;
             
             if (statusText != null) statusText.text = "Hosting Game";
@@ -71,10 +71,10 @@ public class NetworkUIManager : MonoBehaviour
         isSinglePlayerMode = true;
         isConnected = true;
         
-        // 启动WebRTCNetworkManager的单人模式
-        if (WebRTCNetworkManager.Instance != null)
+        // 启动WebSocketNetworkManager的单人模式
+        if (WebSocketNetworkManager.Instance != null)
         {
-            WebRTCNetworkManager.Instance.StartSinglePlayerMode();
+            WebSocketNetworkManager.Instance.StartSinglePlayerMode();
         }
         
         if (statusText != null) statusText.text = "Single Player Mode";
@@ -95,9 +95,9 @@ public class NetworkUIManager : MonoBehaviour
 
     void OnJoinButtonClicked()
     {
-        if (WebRTCNetworkManager.Instance != null && !string.IsNullOrEmpty(roomIdInput.text))
+        if (WebSocketNetworkManager.Instance != null && !string.IsNullOrEmpty(roomIdInput.text))
         {
-            WebRTCNetworkManager.Instance.JoinGame(roomIdInput.text);
+            WebSocketNetworkManager.Instance.JoinGame(roomIdInput.text);
             isConnected = true;
             
             if (statusText != null) statusText.text = "Joined Game: " + roomIdInput.text;
@@ -110,9 +110,9 @@ public class NetworkUIManager : MonoBehaviour
 
     void UpdatePlayerCount()
     {
-        if (playerCountText != null && WebRTCNetworkManager.Instance != null)
+        if (playerCountText != null && WebSocketNetworkManager.Instance != null)
         {
-            int playerCount = WebRTCNetworkManager.Instance.GetPlayerCount();
+            int playerCount = WebSocketNetworkManager.Instance.GetPlayerCount();
             playerCountText.text = "Players: " + playerCount;
         }
     }
@@ -120,9 +120,9 @@ public class NetworkUIManager : MonoBehaviour
     void Update()
     {
         // 更新连接状态
-        if (!isSinglePlayerMode && WebRTCNetworkManager.Instance != null)
+        if (!isSinglePlayerMode && WebSocketNetworkManager.Instance != null)
         {
-            if (!WebRTCNetworkManager.Instance.IsConnected() && isConnected)
+            if (!WebSocketNetworkManager.Instance.IsConnected() && isConnected)
             {
                 // 连接断开
                 isConnected = false;

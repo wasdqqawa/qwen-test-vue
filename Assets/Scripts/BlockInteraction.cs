@@ -38,9 +38,9 @@ public class BlockInteraction : MonoBehaviour
                 World.Instance.RemoveBlock(blockPos.x, blockPos.y, blockPos.z);
                 
                 // 如果在联机模式下，发送破坏方块的消息
-                if (WebRTCNetworkManager.Instance != null && WebRTCNetworkManager.Instance.IsConnected())
+                if (WebSocketNetworkManager.Instance != null && WebSocketNetworkManager.Instance.IsConnected())
                 {
-                    WebRTCNetworkManager.Instance.SendBlockUpdate(blockPos.x, blockPos.y, blockPos.z, BlockType.Air, false);
+                    WebSocketNetworkManager.Instance.SendBlockUpdate(blockPos.x, blockPos.y, blockPos.z, BlockType.Air, false);
                 }
             }
             else
@@ -73,9 +73,9 @@ public class BlockInteraction : MonoBehaviour
                 World.Instance.SetBlock(roundedPosition.x, roundedPosition.y, roundedPosition.z, BlockType.Grass);
                 
                 // 如果在联机模式下，发送放置方块的消息
-                if (WebRTCNetworkManager.Instance != null && WebRTCNetworkManager.Instance.IsConnected())
+                if (WebSocketNetworkManager.Instance != null && WebSocketNetworkManager.Instance.IsConnected())
                 {
-                    WebRTCNetworkManager.Instance.SendBlockUpdate(roundedPosition.x, roundedPosition.y, roundedPosition.z, BlockType.Grass, true);
+                    WebSocketNetworkManager.Instance.SendBlockUpdate(roundedPosition.x, roundedPosition.y, roundedPosition.z, BlockType.Grass, true);
                 }
             }
             else

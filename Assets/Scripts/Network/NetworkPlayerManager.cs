@@ -27,11 +27,35 @@ public class NetworkPlayerManager : MonoBehaviour
     
     void Start()
     {
-        // 订阅网络事件 - 通过WebRTCNetworkManager的事件
-        if (WebRTCNetworkManager.Instance != null)
+        // 订阅网络事件 - 通过WebSocketNetworkManager的事件
+        if (WebSocketNetworkManager.Instance != null)
         {
-            WebRTCNetworkManager.Instance.OnNetworkMessageReceived += OnNetworkMessageReceived;
+            WebSocketNetworkManager.Instance.OnNetworkMessageReceived += OnNetworkMessageReceived;
         }
+    }
+    
+    void OnDestroy()
+    {
+        // 取消订阅网络事件
+        if (WebSocketNetworkManager.Instance != null)
+        {
+            WebSocketNetworkManager.Instance.OnNetworkMessageReceived -= OnNetworkMessageReceived;
+        }
+        
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+        
+        // 清理所有网络玩家
+        foreach (GameObject player in networkPlayers.Values)
+        {
+            if (player != null)
+            {
+                DestroyImmediate(player);
+            }
+        }
+        networkPlayers.Clear();
     }
     
     public void AddNetworkPlayer(string playerId, Vector3 position, Vector3 rotation)
@@ -113,7 +137,7 @@ public class NetworkPlayerManager : MonoBehaviour
                 PlayerPositionMessage playerMsg = JsonUtility.FromJson<PlayerPositionMessage>(jsonMessage);
                 
                 // 忽略本地玩家的消息
-                if (playerMsg.playerId != WebRTCNetworkManager.Instance?.GetLocalPlayerId())
+                if (playerMsg.playerId != WebSocketNetworkManager.Instance?.GetLocalPlayerId())
                 {
                     // 添加或更新网络玩家
                     if (!networkPlayers.ContainsKey(playerMsg.playerId))

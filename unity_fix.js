@@ -162,6 +162,27 @@ function performanceOptimization() {
             }
         }, 5000); // 每5秒检查一次
     }
+    
+    // 优化游戏循环
+    window.gameLoopOptimization = {
+        lastTime: 0,
+        frameCount: 0,
+        fps: 0,
+        
+        calculateFPS: function(timestamp) {
+            if (timestamp - this.lastTime >= 1000) {
+                this.fps = this.frameCount;
+                this.frameCount = 0;
+                this.lastTime = timestamp;
+                
+                // 更新FPS显示
+                if (window.UnityInterface && typeof window.UnityInterface.updateFPS === 'function') {
+                    window.UnityInterface.updateFPS(this.fps);
+                }
+            }
+            this.frameCount++;
+        }
+    };
 }
 
 // 修复Unity与JavaScript交互
@@ -199,6 +220,13 @@ function fixUnityJSInteraction() {
                 window.unityInstance.SendMessage(gameObject, methodName, value);
             } else {
                 console.warn('Unity instance not available for message:', gameObject, methodName, value);
+                
+                // 延迟重试
+                setTimeout(function() {
+                    if (window.unityInstance && window.unityInstance.SendMessage) {
+                        window.unityInstance.SendMessage(gameObject, methodName, value);
+                    }
+                }, 1000);
             }
         },
         
@@ -256,6 +284,38 @@ function fixUnityJSInteraction() {
             const fpsElement = document.getElementById('fpsCounter');
             if (fpsElement) {
                 fpsElement.textContent = `FPS: ${Math.round(fps)}`;
+            }
+        },
+        
+        // 新增：更新玩家位置显示
+        updatePlayerPosition: function(x, y, z) {
+            const positionElement = document.getElementById('playerPosition');
+            if (positionElement) {
+                positionElement.textContent = `Position: ${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)}`;
+            }
+        },
+        
+        // 新增：显示/隐藏游戏内UI
+        showGameUI: function(show) {
+            const gameUI = document.getElementById('inGameUI');
+            if (gameUI) {
+                gameUI.style.display = show ? 'block' : 'none';
+            }
+        },
+        
+        // 新增：显示/隐藏主菜单
+        showMainMenu: function(show) {
+            const mainMenu = document.getElementById('mainMenu');
+            if (mainMenu) {
+                mainMenu.style.display = show ? 'flex' : 'none';
+            }
+        },
+        
+        // 新增：显示/隐藏加载屏幕
+        showLoadingScreen: function(show) {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.display = show ? 'flex' : 'none';
             }
         }
     };

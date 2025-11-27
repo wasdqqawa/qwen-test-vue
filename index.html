@@ -773,10 +773,16 @@
                 }, 1000);
             }
             
-            // 隐藏菜单
+            // 隐藏菜单并显示游戏界面
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('multiplayerMenu').style.display = 'none';
             document.getElementById('settingsMenu').style.display = 'none';
+            document.getElementById('inGameUI').style.display = 'block';
+            
+            // 如果是移动设备，显示移动控制
+            if (isMobile()) {
+                document.getElementById('mobileControls').style.display = 'flex';
+            }
         }
         
         // 启动主机模式
@@ -793,13 +799,18 @@
                     window.unityInstance.SendMessage('ImprovedWebSocketNetworkManager', 'StartHost', '');
                 }
                 
-                // 隐藏菜单
+                // 隐藏菜单并显示游戏界面
                 document.getElementById('mainMenu').style.display = 'none';
                 document.getElementById('multiplayerMenu').style.display = 'none';
                 document.getElementById('settingsMenu').style.display = 'none';
+                document.getElementById('inGameUI').style.display = 'block';
+                
+                // 如果是移动设备，显示移动控制
+                if (isMobile()) {
+                    document.getElementById('mobileControls').style.display = 'flex';
+                }
             } else {
                 alert("Failed to connect to server. Please make sure the WebSocket server is running.");
-    <script src="unity_fix.js"></script>
                 startSinglePlayer(); // Fallback to single player
             }
         }
@@ -820,10 +831,16 @@
                     window.unityInstance.SendMessage('ImprovedWebSocketNetworkManager', 'JoinGame', roomId);
                 }
                 
-                // 隐藏菜单
+                // 隐藏菜单并显示游戏界面
                 document.getElementById('mainMenu').style.display = 'none';
                 document.getElementById('multiplayerMenu').style.display = 'none';
                 document.getElementById('settingsMenu').style.display = 'none';
+                document.getElementById('inGameUI').style.display = 'block';
+                
+                // 如果是移动设备，显示移动控制
+                if (isMobile()) {
+                    document.getElementById('mobileControls').style.display = 'flex';
+                }
             } else {
                 alert("Failed to connect to server. Please make sure the WebSocket server is running and the Room ID is correct.");
                 startSinglePlayer(); // Fallback to single player
@@ -870,14 +887,38 @@
             }
         });
         
-        // 设置语言选择事件
-        document.getElementById('languageSelect').addEventListener('change', function() {
-            const selectedLanguage = this.value;
-            console.log("Language changed to: " + selectedLanguage);
-            
-            // 通知Unity更改语言
-            if (window.unityInstance) {
-                window.unityInstance.SendMessage('SettingsManager', 'OnLanguageChangedFromJS', selectedLanguage);
+        // 暂停游戏
+        document.getElementById('pauseButton').addEventListener('click', function() {
+            document.getElementById('pauseMenu').style.display = 'flex';
+        });
+        
+        // 恢复游戏
+        document.getElementById('resumeButton').addEventListener('click', function() {
+            document.getElementById('pauseMenu').style.display = 'none';
+        });
+        
+        // 在暂停菜单中打开设置
+        document.getElementById('settingsInGameButton').addEventListener('click', function() {
+            document.getElementById('pauseMenu').style.display = 'none';
+            document.getElementById('settingsMenu').style.display = 'block';
+        });
+        
+        // 从暂停菜单返回主菜单
+        document.getElementById('mainMenuButton').addEventListener('click', function() {
+            if (confirm("Are you sure you want to return to main menu? Your progress may be lost.")) {
+                document.getElementById('pauseMenu').style.display = 'none';
+                document.getElementById('inGameUI').style.display = 'none';
+                document.getElementById('mainMenu').style.display = 'flex';
+                
+                // 隐藏移动控制
+                document.getElementById('mobileControls').style.display = 'none';
+            }
+        });
+        
+        // 从暂停菜单退出游戏
+        document.getElementById('quitInGameButton').addEventListener('click', function() {
+            if (confirm("Are you sure you want to quit the game?")) {
+                window.close();
             }
         });
         
@@ -908,6 +949,17 @@
             }
         });
         
+        // 设置语言选择事件
+        document.getElementById('languageSelect').addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            console.log("Language changed to: " + selectedLanguage);
+            
+            // 通知Unity更改语言
+            if (window.unityInstance) {
+                window.unityInstance.SendMessage('SettingsManager', 'OnLanguageChangedFromJS', selectedLanguage);
+            }
+        });
+        
         // 设置音量滑块事件
         document.getElementById('volumeSlider').addEventListener('input', function() {
             const volume = this.value;
@@ -918,6 +970,78 @@
                 window.unityInstance.SendMessage('SettingsManager', 'OnVolumeChangedFromJS', volume);
             }
         });
+        
+        // 启动Unity WebGL构建
+        function startUnityGame() {
+            // 模拟Unity加载完成后的初始化
+            setTimeout(function() {
+                // 创建一个模拟的Unity实例用于测试
+                window.unityInstance = {
+                    SendMessage: function(gameObject, methodName, value) {
+                        console.log('Unity SendMessage: ' + gameObject + '.' + methodName + ' = ' + value);
+                        // 这里应该与Unity的实际实例交互
+                    }
+                };
+                
+                // 显示主菜单
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainMenu').style.display = 'flex';
+                
+                // 根据设备类型显示移动控制
+                if (isMobile()) {
+                    document.getElementById('mobileControls').style.display = 'flex';
+                }
+            }, 2000); // 模拟Unity加载时间
+        }
+        
+        // 页面加载完成后启动游戏
+        document.addEventListener('DOMContentLoaded', function() {
+            startUnityGame();
+            
+            // 添加对Unity加载完成的监听
+            if (typeof UnityLoader !== 'undefined') {
+                // 如果有UnityLoader，则使用实际的Unity实例
+                console.log('UnityLoader detected');
+            }
+        });
+    </script>
+    <script src="unity_fix.js"></script>
+    <!-- Unity WebGL构建 -->
+    <script src="Build/WebGL/UnityLoader.js"></script>
+    <script>
+        var gameInstance = UnityLoader.instantiate('gameCanvas', 'Build/WebGL/MinecraftClone.json', {
+            onProgress: UnityProgress,
+            Module: {
+                onRuntimeInitialized: function() {
+                    console.log('Unity runtime initialized');
+                    // Unity运行时初始化完成后，设置Unity实例
+                    if (window.gameInstance) {
+                        window.unityInstance = window.gameInstance;
+                    }
+                }
+            }
+        });
+        
+        function UnityProgress(gameInstance, progress) {
+            if (!gameInstance.Module)
+                document.getElementById('progress').style.width = (100 * progress) + "%";
+                
+            if (progress === 1.0) {
+                // 加载完成，隐藏加载屏幕并显示主菜单
+                setTimeout(function() {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainMenu').style.display = 'flex';
+                    
+                    // 根据设备类型显示移动控制
+                    if (isMobile()) {
+                        document.getElementById('mobileControls').style.display = 'flex';
+                    }
+                    
+                    // 设置Unity实例
+                    window.unityInstance = gameInstance;
+                }, 500);
+            }
+        }
     </script>
 </body>
 </html>

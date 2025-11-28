@@ -1,81 +1,64 @@
-# Web MC - Minecraft-Style Game
+# 万能工具箱
 
-A Minecraft-style 3D game with multiplayer support using WebGL and Three.js. This project runs entirely in the browser and can be deployed to GitHub Pages.
+一个简洁实用的多功能工具集合网站，包含多种实用工具，可以直接通过GitHub Pages部署访问。
 
-## Features
+## 功能特性
 
-- Minecraft-style block-based 3D world
-- First-person movement controls (WASD + mouse look)
-- Block placement and destruction
-- Multiplayer support (simulated)
-- Day/night cycle
-- Inventory system
-- Mobile-friendly controls
-- Cross-platform compatibility
+### 1. 计算器
+- 基本四则运算
+- 支持复杂表达式
+- 键盘输入支持
 
-## Controls
+### 2. 单位转换器
+- 长度单位转换（毫米、厘米、米、千米、英寸、英尺等）
+- 重量单位转换（毫克、克、千克、吨、盎司、磅等）
+- 温度单位转换（摄氏度、华氏度、开尔文）
+- 面积单位转换（平方米、平方千米、公顷、英亩等）
 
-### Desktop
-- **WASD** or **Arrow Keys**: Move around
-- **Mouse**: Look around
-- **Left Click**: Break block
-- **Right Click**: Place block
-- **Space**: Jump
-- **ESC**: Pause game
+### 3. 文本工具
+- 文本大小写转换
+- 文本反转
+- 字数统计
+- 文本清理
 
-### Mobile
-- On-screen controls for movement and actions
-- Touch-based block interaction
+### 4. 颜色选择器
+- 实时颜色选择
+- HEX值显示
+- 颜色预览
 
-## Technologies Used
+### 5. 二维码生成器
+- 将文本或网址转换为二维码
+- 简化实现，便于部署
 
-- **Three.js**: 3D rendering engine
-- **WebGL**: Hardware-accelerated graphics
-- **HTML5/CSS3**: UI and styling
-- **JavaScript**: Game logic and interactions
+### 6. 密码生成器
+- 自定义密码长度
+- 可选择包含大写字母、小写字母、数字、符号
+- 一键复制功能
 
-## Deployment
+## 部署到GitHub Pages
 
-This project is designed to work with GitHub Pages:
+1. 将此代码推送到GitHub仓库
+2. 在仓库设置中启用GitHub Pages
+3. 选择源为 "Deploy from a branch"
+4. 选择 `main` 分支和 `/ (root)` 目录
+5. 保存设置，稍后即可通过 `https://<username>.github.io/<repository-name>` 访问
 
-1. Push your code to a GitHub repository
-2. Enable GitHub Pages in your repository settings
-3. Select the `main` branch as the source
-4. Your game will be available at `https://your-username.github.io/repository-name`
+## 技术特点
 
-## Local Development
+- 纯HTML/CSS/JavaScript实现，无需后端
+- 响应式设计，支持移动设备
+- 所有工具功能完整，用户体验良好
+- 代码简洁，易于维护和扩展
 
-To run the project locally:
-
-```bash
-npm install
-npm start
-```
-
-Or simply open `index.html` in your browser.
-
-## Project Structure
+## 文件结构
 
 ```
-├── index.html          # Main game file
-├── README.md           # This file
-└── package.json        # Dependencies and scripts
+.
+├── index.html          # 主页面
+├── styles.css          # 样式文件
+├── script.js           # JavaScript功能实现
+├── 404.html            # GitHub Pages 404页面
+└── README.md           # 项目说明
 ```
 
-## Browser Compatibility
-
-- Chrome 58+
-- Firefox 55+
-- Safari 11+
-- Edge 79+
-
-## License
-
-MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+这个工具箱网站可以满足日常的多种实用需求，所有功能都在一个页面中，方便使用。

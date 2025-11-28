@@ -1,1241 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web MC - Minecraft-Style Game</title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body { 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            background: #000; 
-            font-family: 'Minecraft', 'Courier New', Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            background-attachment: fixed;
-        }
-        
-        #gameContainer { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-        }
-        
-        #loadingScreen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-        
-        #loadingScreen h1 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-            color: #fff;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 3px;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00ff00, 0 0 20px #00ff00; }
-            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ff00, 0 0 40px #00ff00; }
-        }
-        
-        #progressBar {
-            width: 60%;
-            height: 25px;
-            background: #333;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #4CAF50;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-        
-        #progress {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            transition: width 0.5s ease;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
-        }
-        
-        #instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: white;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            max-width: 400px;
-            border: 1px solid #4CAF50;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
-        }
-        
-        #instructions strong {
-            color: #4CAF50;
-        }
-        
-        /* Minecraft-style main menu */
-        #mainMenu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, #1a1a2e 0%, #0f0f23 70%, #0a0a1a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-            color: white;
-            backdrop-filter: blur(5px);
-        }
-        
-        .menu-title {
-            font-size: 4em;
-            margin-bottom: 60px;
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-            color: #fff;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 4px;
-            animation: titleGlow 3s ease-in-out infinite alternate;
-            font-family: 'Minecraft', 'Courier New', Arial, sans-serif;
-            text-transform: uppercase;
-            position: relative;
-        }
-        
-        .menu-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #4CAF50, transparent);
-        }
-        
-        @keyframes titleGlow {
-            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00ff00, 0 0 20px #00ff00; }
-            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ff00, 0 0 40px #00ff00; }
-        }
-        
-        .menu-buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .menu-button {
-            width: 320px;
-            padding: 18px 0;
-            background: linear-gradient(145deg, #4CAF50, #2E7D32);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 20px;
-            font-family: 'Minecraft', 'Courier New', Arial, sans-serif;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 0 #1B5E20, 0 8px 10px rgba(0,0,0,0.3);
-            letter-spacing: 1px;
-            font-weight: bold;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .menu-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-        
-        .menu-button:hover::before {
-            left: 100%;
-        }
-        
-        .menu-button:hover {
-            background: linear-gradient(145deg, #45a049, #388E3C);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 0 #1B5E20, 0 10px 15px rgba(0,0,0,0.4);
-        }
-        
-        .menu-button:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #1B5E20;
-        }
-        
-        .menu-button.quit {
-            background: linear-gradient(145deg, #f44336, #c62828);
-            box-shadow: 0 6px 0 #b71c1c, 0 8px 10px rgba(0,0,0,0.3);
-        }
-        
-        .menu-button.quit:hover {
-            background: linear-gradient(145deg, #e53935, #d32f2f);
-            box-shadow: 0 8px 0 #b71c1c, 0 10px 15px rgba(0,0,0,0.4);
-        }
-        
-        .menu-button.quit:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #b71c1c;
-        }
-        
-        /* Multiplayer menu */
-        #multiplayerMenu {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(10, 15, 30, 0.95);
-            color: white;
-            padding: 40px;
-            border-radius: 15px;
-            z-index: 201;
-            display: none;
-            min-width: 450px;
-            border: 2px solid #4CAF50;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
-            backdrop-filter: blur(10px);
-        }
-        
-        #multiplayerMenu h2 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 2em;
-            color: #4CAF50;
-            text-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
-        }
-        
-        .multiplayer-options {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .multiplayer-input-group {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            margin: 15px 0;
-        }
-        
-        .multiplayer-input-group input {
-            padding: 12px;
-            margin-right: 10px;
-            border-radius: 8px;
-            border: 2px solid #4CAF50;
-            width: 180px;
-            flex-grow: 1;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .multiplayer-input-group input:focus {
-            outline: none;
-            border-color: #8BC34A;
-            box-shadow: 0 0 10px rgba(139, 195, 74, 0.5);
-        }
-        
-        .multiplayer-input-group button {
-            padding: 12px 25px;
-            background: linear-gradient(145deg, #2196F3, #0D47A1);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 0 #0D47A1;
-        }
-        
-        .multiplayer-input-group button:hover {
-            background: linear-gradient(145deg, #1E88E5, #0D47A1);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #0D47A1;
-        }
-        
-        .multiplayer-input-group button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #0D47A1;
-        }
-        
-        .back-button {
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: linear-gradient(145deg, #9E9E9E, #616161);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 0 #424242;
-        }
-        
-        .back-button:hover {
-            background: linear-gradient(145deg, #BDBDBD, #757575);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #424242;
-        }
-        
-        .back-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #424242;
-        }
-        
-        /* 设置菜单 */
-        #settingsMenu {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(10, 15, 30, 0.95);
-            color: white;
-            padding: 40px;
-            border-radius: 15px;
-            z-index: 201;
-            display: none;
-            min-width: 500px;
-            border: 2px solid #4CAF50;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
-            backdrop-filter: blur(10px);
-        }
-        
-        #settingsMenu h2 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 2em;
-            color: #4CAF50;
-            text-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
-        }
-        
-        .settings-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .settings-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        
-        .settings-row:hover {
-            background: rgba(76, 175, 80, 0.1);
-        }
-        
-        .settings-label {
-            flex: 1;
-            font-size: 16px;
-        }
-        
-        .settings-control {
-            flex: 1;
-            text-align: right;
-        }
-        
-        select, input[type="range"] {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 2px solid #4CAF50;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 16px;
-            width: 100%;
-            max-width: 200px;
-        }
-        
-        input[type="range"] {
-            height: 25px;
-            -webkit-appearance: none;
-            background: #333;
-            border-radius: 5px;
-            outline: none;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #4CAF50;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #4CAF50;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: #4CAF50;
-        }
-        
-        #keyBindingsPanel {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 2px solid #4CAF50;
-        }
-        
-        #keyBindingsPanel h3 {
-            color: #4CAF50;
-            text-align: center;
-            margin-top: 0;
-            font-size: 1.3em;
-        }
-        
-        .key-binding-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 8px 0;
-            padding: 5px;
-            border-radius: 4px;
-        }
-        
-        .key-binding-row:nth-child(odd) {
-            background: rgba(76, 175, 80, 0.05);
-        }
-        
-        .key-binding-row span:first-child {
-            flex: 2;
-        }
-        
-        .key-binding-row span:last-child {
-            flex: 1;
-            text-align: center;
-            background: #333;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            color: #4CAF50;
-            border: 1px solid #4CAF50;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .menu-title {
-                font-size: 2.5em;
-                margin-bottom: 40px;
-            }
-            
-            .menu-button {
-                width: 280px;
-                padding: 15px 0;
-                font-size: 18px;
-            }
-            
-            #multiplayerMenu, #settingsMenu {
-                min-width: 320px;
-                padding: 25px;
-                width: 90%;
-                max-width: 400px;
-            }
-            
-            .multiplayer-input-group {
-                flex-direction: column;
-            }
-            
-            .multiplayer-input-group input {
-                margin-right: 0;
-                margin-bottom: 10px;
-                width: 100%;
-            }
-            
-            .multiplayer-input-group button {
-                width: 100%;
-            }
-            
-            .settings-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .settings-label {
-                font-size: 16px;
-            }
-            
-            #instructions {
-                position: static;
-                margin: 20px;
-                max-width: none;
-            }
-        }
-        
-        /* 移动设备优化 */
-        @media (hover: none) and (pointer: coarse) {
-            .menu-button {
-                padding: 20px 0;
-                font-size: 22px;
-            }
-            
-            .menu-button:hover {
-                transform: none;
-            }
-        }
-    </style>
+    <title>万能工具箱</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="gameContainer">
-        <div id="loadingScreen">
-            <h1>Web MC - Minecraft-Style Game</h1>
-            <div id="progressBar">
-                <div id="progress"></div>
-            </div>
-            <p>Loading game...</p>
-        </div>
+    <div class="container">
+        <header>
+            <h1>万能工具箱</h1>
+            <p>一个简洁实用的多功能工具集合</p>
+        </header>
         
-        <!-- Minecraft-style Main Menu -->
-        <div id="mainMenu">
-            <h1 class="menu-title">WEB MC</h1>
-            <div class="menu-buttons">
-                <button id="singlePlayerButton" class="menu-button">Single Player</button>
-                <button id="multiplayerButton" class="menu-button">Multiplayer</button>
-                <button id="settingsButton" class="menu-button">Settings</button>
-                <button id="quitButton" class="menu-button quit">Quit</button>
-            </div>
-        </div>
+        <nav>
+            <ul>
+                <li><a href="#calculator">计算器</a></li>
+                <li><a href="#converter">单位转换</a></li>
+                <li><a href="#text-tools">文本工具</a></li>
+                <li><a href="#color-picker">颜色选择器</a></li>
+                <li><a href="#qrcode">二维码生成</a></li>
+                <li><a href="#password">密码生成</a></li>
+            </ul>
+        </nav>
         
-        <!-- Multiplayer Menu -->
-        <div id="multiplayerMenu">
-            <h2>Multiplayer</h2>
-            <div class="multiplayer-options">
-                <button id="hostButton" class="menu-button" style="width: 100%;">Create Game</button>
-                <div class="multiplayer-input-group">
-                    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
-                    <button id="joinButton" class="menu-button">Join Game</button>
-                </div>
-                <button id="backButton" class="back-button">Back</button>
-            </div>
-        </div>
-        
-        <!-- Settings Menu -->
-        <div id="settingsMenu">
-            <h2>Settings</h2>
-            <div class="settings-options">
-                <div class="settings-row">
-                    <span class="settings-label">Language:</span>
-                    <div class="settings-control">
-                        <select id="languageSelect">
-                            <option value="en">English</option>
-                            <option value="zh">中文</option>
-                        </select>
+        <main>
+            <!-- 计算器 -->
+            <section id="calculator" class="tool-section">
+                <h2>计算器</h2>
+                <div class="calculator">
+                    <input type="text" id="calc-display" readonly>
+                    <div class="calc-buttons">
+                        <button onclick="clearCalc()">C</button>
+                        <button onclick="deleteCalc()">DEL</button>
+                        <button onclick="appendToCalc('/')">/</button>
+                        <button onclick="appendToCalc('*')">×</button>
+                        <button onclick="appendToCalc('7')">7</button>
+                        <button onclick="appendToCalc('8')">8</button>
+                        <button onclick="appendToCalc('9')">9</button>
+                        <button onclick="appendToCalc('-')">-</button>
+                        <button onclick="appendToCalc('4')">4</button>
+                        <button onclick="appendToCalc('5')">5</button>
+                        <button onclick="appendToCalc('6')">6</button>
+                        <button onclick="appendToCalc('+')">+</button>
+                        <button onclick="appendToCalc('1')">1</button>
+                        <button onclick="appendToCalc('2')">2</button>
+                        <button onclick="appendToCalc('3')">3</button>
+                        <button onclick="calculate()" class="equals">=</button>
+                        <button onclick="appendToCalc('0')" class="zero">0</button>
+                        <button onclick="appendToCalc('.')">.</button>
                     </div>
                 </div>
-                <div class="settings-row">
-                    <span class="settings-label">Fullscreen:</span>
-                    <div class="settings-control">
-                        <input type="checkbox" id="fullscreenToggle">
+            </section>
+            
+            <!-- 单位转换器 -->
+            <section id="converter" class="tool-section">
+                <h2>单位转换器</h2>
+                <div class="converter">
+                    <select id="conversion-type">
+                        <option value="length">长度</option>
+                        <option value="weight">重量</option>
+                        <option value="temperature">温度</option>
+                        <option value="area">面积</option>
+                    </select>
+                    
+                    <div class="conversion-inputs">
+                        <input type="number" id="from-value" placeholder="输入数值">
+                        <select id="from-unit"></select>
+                        <span>→</span>
+                        <select id="to-unit"></select>
+                        <input type="text" id="result" readonly>
                     </div>
                 </div>
-                <div class="settings-row">
-                    <span class="settings-label">Sound Volume:</span>
-                    <div class="settings-control">
-                        <input type="range" id="volumeSlider" min="0" max="100" value="80">
+            </section>
+            
+            <!-- 文本工具 -->
+            <section id="text-tools" class="tool-section">
+                <h2>文本工具</h2>
+                <div class="text-tools">
+                    <textarea id="text-input" placeholder="输入文本..."></textarea>
+                    <div class="text-controls">
+                        <button onclick="uppercaseText()">转大写</button>
+                        <button onclick="lowercaseText()">转小写</button>
+                        <button onclick="reverseText()">反转文本</button>
+                        <button onclick="countWords()">统计字数</button>
+                        <button onclick="clearText()">清空</button>
+                    </div>
+                    <div class="text-result">
+                        <textarea id="text-output" readonly></textarea>
+                        <div id="word-count">字数: 0 | 字符数: 0</div>
                     </div>
                 </div>
-                <div id="keyBindingsPanel">
-                    <h3>Key Bindings (PC Only)</h3>
-                    <div class="key-binding-row">
-                        <span>Move Forward:</span>
-                        <span id="forwardKey">W</span>
+            </section>
+            
+            <!-- 颜色选择器 -->
+            <section id="color-picker" class="tool-section">
+                <h2>颜色选择器</h2>
+                <div class="color-picker">
+                    <input type="color" id="color-input" value="#ff0000">
+                    <input type="text" id="color-value" value="#ff0000" readonly>
+                    <div class="color-preview" id="color-preview"></div>
+                </div>
+            </section>
+            
+            <!-- 二维码生成器 -->
+            <section id="qrcode" class="tool-section">
+                <h2>二维码生成器</h2>
+                <div class="qrcode-generator">
+                    <input type="text" id="qrcode-input" placeholder="输入文本或网址">
+                    <button onclick="generateQRCode()">生成二维码</button>
+                    <div id="qrcode-display"></div>
+                </div>
+            </section>
+            
+            <!-- 密码生成器 -->
+            <section id="password" class="tool-section">
+                <h2>密码生成器</h2>
+                <div class="password-generator">
+                    <div class="password-options">
+                        <label>
+                            <input type="checkbox" id="uppercase-chk" checked> 大写字母
+                        </label>
+                        <label>
+                            <input type="checkbox" id="lowercase-chk" checked> 小写字母
+                        </label>
+                        <label>
+                            <input type="checkbox" id="numbers-chk" checked> 数字
+                        </label>
+                        <label>
+                            <input type="checkbox" id="symbols-chk" checked> 符号
+                        </label>
                     </div>
-                    <div class="key-binding-row">
-                        <span>Move Backward:</span>
-                        <span id="backwardKey">S</span>
+                    <div class="password-length">
+                        <label>长度: <input type="number" id="password-length" min="4" max="50" value="12"></label>
                     </div>
-                    <div class="key-binding-row">
-                        <span>Move Left:</span>
-                        <span id="leftKey">A</span>
-                    </div>
-                    <div class="key-binding-row">
-                        <span>Move Right:</span>
-                        <span id="rightKey">D</span>
-                    </div>
-                    <div class="key-binding-row">
-                        <span>Jump:</span>
-                        <span id="jumpKey">Space</span>
-                    </div>
-                    <div class="key-binding-row">
-                        <span>Break Block:</span>
-                        <span id="breakKey">Left Click</span>
-                    </div>
-                    <div class="key-binding-row">
-                        <span>Place Block:</span>
-                        <span id="placeKey">Right Click</span>
+                    <button onclick="generatePassword()">生成密码</button>
+                    <div class="password-output">
+                        <input type="text" id="generated-password" readonly>
+                        <button onclick="copyPassword()">复制</button>
                     </div>
                 </div>
-                <button id="settingsBackButton" class="back-button">Back</button>
-            </div>
-        </div>
-        
-        <canvas id="gameCanvas" width="1200" height="700"></canvas>
-        
-        <!-- Game UI -->
-        <div id="inGameUI" style="display: none;">
-            <button id="pauseButton" class="menu-button" style="position: absolute; top: 20px; right: 20px; width: auto; padding: 10px 20px;">Pause</button>
-            <div id="gameInfo" style="position: absolute; top: 20px; left: 20px; color: white; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;">
-                <div id="playerPosition">Position: 0, 0, 0</div>
-                <div id="fpsCounter">FPS: 60</div>
-                <div id="playerCount">Players: 1</div>
-            </div>
-            <div id="blockSelection" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px;">
-                <button class="menu-button" style="width: auto; padding: 10px;">Grass</button>
-                <button class="menu-button" style="width: auto; padding: 10px;">Dirt</button>
-                <button class="menu-button" style="width: auto; padding: 10px;">Stone</button>
-                <button class="menu-button" style="width: auto; padding: 10px;">Wood</button>
-                <button class="menu-button" style="width: auto; padding: 10px;">Leaves</button>
-            </div>
-        </div>
-        
-        <!-- Pause Menu -->
-        <div id="pauseMenu" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 300; display: none; justify-content: center; align-items: center;">
-            <div style="background: #1a1a2e; padding: 30px; border-radius: 10px; text-align: center; min-width: 300px;">
-                <h2 style="color: #4CAF50; margin-top: 0;">Game Paused</h2>
-                <div class="menu-buttons">
-                    <button id="resumeButton" class="menu-button">Resume</button>
-                    <button id="settingsInGameButton" class="menu-button">Settings</button>
-                    <button id="mainMenuButton" class="menu-button">Main Menu</button>
-                    <button id="quitInGameButton" class="menu-button quit">Quit</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Mobile Controls -->
-        <div id="mobileControls" style="display: none; position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box;">
-            <div id="mobileMovementControls" style="display: flex; flex-direction: column; align-items: center;">
-                <button id="mobileJumpButton" class="menu-button" style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">Jump</button>
-            </div>
-            <div id="mobileActionControls" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <button id="mobileBreakButton" class="menu-button" style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">Break</button>
-                <button id="mobilePlaceButton" class="menu-button" style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">Place</button>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
     
-    <div id="instructions">
-        <strong>Controls:</strong><br>
-        WASD/Arrow Keys: Move<br>
-        Mouse: Look around<br>
-        Space: Jump<br>
-        Left Click: Remove block<br>
-        Right Click: Place block
-    </div>
-
-    <!-- Three.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <script>
-        // 检测浏览器兼容性
-        function isFirefox() {
-            return typeof InstallTrigger !== 'undefined';
-        }
-        
-        // 检测移动设备
-        function isMobile() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-        
-        // Firefox兼容性修复
-        if (isFirefox()) {
-            // Firefox特定的兼容性修复
-            console.log("Firefox detected, applying compatibility fixes");
-            
-            // 修复可能的CSS兼容性问题
-            document.body.style.MozUserSelect = 'none';
-            document.body.style.userSelect = 'none';
-        }
-        
-        // 模拟加载过程
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loadingScreen');
-                const progressBar = document.getElementById('progressBar');
-                const progress = document.getElementById('progress');
-                
-                let width = 0;
-                const interval = setInterval(function() {
-                    if (width >= 100) {
-                        clearInterval(interval);
-                        loadingScreen.style.display = 'none';
-                    } else {
-                        width++; 
-                        progress.style.width = width + '%';
-                    }
-                }, 30);
-            }, 1000);
-        });
-        
-        // 游戏状态管理
-        const gameState = {
-            currentScreen: 'loading',
-            gameStarted: false,
-            gamePaused: false,
-            playerHealth: 100,
-            fps: 0,
-            lastUpdate: 0,
-            frameCount: 0,
-            lastFpsUpdate: 0
-        };
-
-        // Three.js 变量
-        let scene, camera, renderer;
-        let player, worldBlocks = [];
-        let clock = new THREE.Clock();
-        let moveForward = false;
-        let moveBackward = false;
-        let moveLeft = false;
-        let moveRight = false;
-        let canJump = false;
-        let prevTime = performance.now();
-        let velocity = new THREE.Vector3();
-        let direction = new THREE.Vector3();
-        let raycaster = new THREE.Raycaster();
-        let mouse = new THREE.Vector2();
-
-        // DOM 元素
-        const elements = {
-            loadingScreen: document.getElementById('loadingScreen'),
-            mainMenu: document.getElementById('mainMenu'),
-            settingsMenu: document.getElementById('settingsMenu'),
-            multiplayerMenu: document.getElementById('multiplayerMenu'),
-            gameScreen: document.getElementById('gameContainer'),
-            inGameUI: document.getElementById('inGameUI'),
-            pauseMenu: document.getElementById('pauseMenu'),
-            loadingProgress: document.getElementById('progress'),
-            playerPosition: document.getElementById('playerPosition'),
-            fpsCounter: document.getElementById('fpsCounter'),
-            playerCount: document.getElementById('playerCount'),
-            
-            // 按钮
-            singlePlayerButton: document.getElementById('singlePlayerButton'),
-            multiplayerButton: document.getElementById('multiplayerButton'),
-            settingsButton: document.getElementById('settingsButton'),
-            quitButton: document.getElementById('quitButton'),
-            hostButton: document.getElementById('hostButton'),
-            joinButton: document.getElementById('joinButton'),
-            backButton: document.getElementById('backButton'),
-            settingsBackButton: document.getElementById('settingsBackButton'),
-            roomIdInput: document.getElementById('roomIdInput'),
-            pauseButton: document.getElementById('pauseButton'),
-            resumeButton: document.getElementById('resumeButton'),
-            settingsInGameButton: document.getElementById('settingsInGameButton'),
-            mainMenuButton: document.getElementById('mainMenuButton'),
-            quitInGameButton: document.getElementById('quitInGameButton'),
-            
-            // 移动端控制
-            mobileControls: document.getElementById('mobileControls'),
-            mobileJumpButton: document.getElementById('mobileJumpButton'),
-            mobileBreakButton: document.getElementById('mobileBreakButton'),
-            mobilePlaceButton: document.getElementById('mobilePlaceButton')
-        };
-
-        // 初始化游戏
-        function init() {
-            setupEventListeners();
-        }
-
-        // 设置事件监听器
-        function setupEventListeners() {
-            // 主菜单按钮
-            elements.singlePlayerButton.addEventListener('click', () => startGame('single'));
-            elements.multiplayerButton.addEventListener('click', () => showScreen('multiplayerMenu'));
-            elements.settingsButton.addEventListener('click', () => showScreen('settingsMenu'));
-            elements.quitButton.addEventListener('click', () => {
-                if (confirm('Are you sure you want to quit?')) {
-                    window.close();
-                }
-            });
-            
-            // 多人游戏菜单按钮
-            elements.hostButton.addEventListener('click', () => startGame('multi', 'host'));
-            elements.joinButton.addEventListener('click', () => {
-                const roomId = elements.roomIdInput.value.trim();
-                if (roomId) {
-                    startGame('multi', 'join', roomId);
-                } else {
-                    alert('Please enter a Room ID');
-                }
-            });
-            elements.backButton.addEventListener('click', () => showScreen('mainMenu'));
-            
-            // 设置菜单按钮
-            elements.settingsBackButton.addEventListener('click', () => showScreen('mainMenu'));
-            
-            // 游戏内UI按钮
-            elements.pauseButton.addEventListener('click', pauseGame);
-            elements.resumeButton.addEventListener('click', resumeGame);
-            elements.settingsInGameButton.addEventListener('click', () => {
-                showScreen('settingsMenu');
-                gameState.gamePaused = true;
-            });
-            elements.mainMenuButton.addEventListener('click', returnToMainMenu);
-            elements.quitInGameButton.addEventListener('click', () => {
-                if (confirm('Are you sure you want to quit the game?')) {
-                    returnToMainMenu();
-                }
-            });
-            
-            // 移动端按钮
-            elements.mobileJumpButton.addEventListener('click', () => {
-                if (canJump) velocity.y = 10;
-                canJump = false;
-            });
-            elements.mobileBreakButton.addEventListener('click', () => {
-                // 模拟左键点击（破坏方块）
-                if (gameState.gameStarted && !gameState.gamePaused) {
-                    handleBlockInteraction('break');
-                }
-            });
-            elements.mobilePlaceButton.addEventListener('click', () => {
-                // 模拟右键点击（放置方块）
-                if (gameState.gameStarted && !gameState.gamePaused) {
-                    handleBlockInteraction('place');
-                }
-            });
-            
-            // 键盘控制
-            document.addEventListener('keydown', onKeyDown, false);
-            document.addEventListener('keyup', onKeyUp, false);
-            
-            // 鼠标控制
-            document.addEventListener('mousedown', onMouseDown, false);
-            document.addEventListener('mousemove', onMouseMove, false);
-            
-            // ESC键暂停
-            document.addEventListener('keydown', (event) => {
-                if (event.code === 'Escape' && gameState.gameStarted && !gameState.gamePaused) {
-                    pauseGame();
-                }
-            });
-        }
-
-        // 开始游戏
-        function startGame(mode, subMode = null, roomId = null) {
-            console.log(`Starting ${mode} game in ${subMode || 'single'} mode`);
-            
-            // 隐藏所有菜单
-            elements.mainMenu.style.display = 'none';
-            elements.settingsMenu.style.display = 'none';
-            elements.multiplayerMenu.style.display = 'none';
-            
-            // 显示游戏界面
-            elements.inGameUI.style.display = 'block';
-            
-            // 如果是移动设备，显示移动控制
-            if (isMobile()) {
-                elements.mobileControls.style.display = 'flex';
-            }
-            
-            gameState.gameStarted = true;
-            gameState.gamePaused = false;
-            
-            // 初始化 Three.js 场景
-            setTimeout(initGameScene, 100);
-        }
-
-        // 初始化 Three.js 游戏场景
-        function initGameScene() {
-            const canvas = document.getElementById('gameCanvas');
-            
-            // 创建场景
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB); // 天空蓝
-            scene.fog = new THREE.Fog(0x87CEEB, 20, 100);
-            
-            // 创建相机
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 10, 15); // 设置初始相机位置
-            
-            // 创建渲染器
-            renderer = new THREE.WebGLRenderer({ 
-                canvas: canvas,
-                antialias: true 
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            
-            // 添加光照
-            const ambientLight = new THREE.AmbientLight(0x606060);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(1, 1, 0.5).normalize();
-            directionalLight.castShadow = true;
-            scene.add(directionalLight);
-            
-            // 创建地面网格
-            createGround();
-            
-            // 创建玩家（简单的立方体）
-            const playerGeometry = new THREE.BoxGeometry(0.8, 1.8, 0.8);
-            const playerMaterial = new THREE.MeshStandardMaterial({ color: 0x4cc9f0 });
-            player = new THREE.Mesh(playerGeometry, playerMaterial);
-            player.position.y = 1.8; // 玩家高度
-            player.castShadow = true;
-            scene.add(player);
-            
-            // 创建一些方块作为示例
-            createWorldBlocks();
-            
-            // 开始游戏循环
-            renderer.setAnimationLoop(animate);
-            
-            // 开始更新UI
-            updateUI();
-        }
-
-        // 创建地面
-        function createGround() {
-            // 创建地面网格
-            const groundSize = 100;
-            const segmentSize = 2;
-            const gridSize = groundSize / segmentSize;
-            
-            const groundGeometry = new THREE.PlaneGeometry(groundSize, groundSize, gridSize, gridSize);
-            const groundMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0x2E8B57,
-                roughness: 0.9,
-                metalness: 0.1
-            });
-            
-            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-            ground.rotation.x = -Math.PI / 2;
-            ground.receiveShadow = true;
-            scene.add(ground);
-            
-            // 在地面上添加一些方块
-            for (let x = -10; x <= 10; x += 2) {
-                for (let z = -10; z <= 10; z += 2) {
-                    if (Math.random() > 0.7) { // 随机放置方块
-                        const blockType = Math.floor(Math.random() * 4);
-                        const blockColors = [0x8fbc8f, 0x8b4513, 0x808080, 0xcd853f]; // 绿色、棕色、灰色、土色
-                        const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
-                        const blockMaterial = new THREE.MeshStandardMaterial({ color: blockColors[blockType] });
-                        const block = new THREE.Mesh(blockGeometry, blockMaterial);
-                        block.position.set(x, 0.5, z);
-                        block.castShadow = true;
-                        block.receiveShadow = true;
-                        scene.add(block);
-                        worldBlocks.push(block);
-                    }
-                }
-            }
-        }
-
-        // 创建世界方块
-        function createWorldBlocks() {
-            // 创建一些结构
-            createTree(-5, 0, -5);
-            createTree(5, 0, -5);
-            createTree(-5, 0, 5);
-            createTree(5, 0, 5);
-        }
-
-        // 创建树
-        function createTree(x, y, z) {
-            const group = new THREE.Group();
-            
-            // 树干
-            const trunkGeometry = new THREE.BoxGeometry(0.5, 3, 0.5);
-            const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-            trunk.position.set(x, y + 2, z);
-            trunk.castShadow = true;
-            group.add(trunk);
-            
-            // 树叶
-            const leavesGeometry = new THREE.BoxGeometry(2, 2, 2);
-            const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-            const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
-            leaves.position.set(x, y + 4, z);
-            leaves.castShadow = true;
-            group.add(leaves);
-            
-            scene.add(group);
-            worldBlocks.push(group);
-        }
-
-        // 游戏动画循环
-        function animate() {
-            if (!gameState.gameStarted || gameState.gamePaused) return;
-            
-            const delta = clock.getDelta();
-            
-            // 玩家移动
-            velocity.x -= velocity.x * 5.0 * delta;
-            velocity.z -= velocity.z * 5.0 * delta;
-            velocity.y -= 9.8 * 0.5 * delta; // 重力
-            
-            direction.z = Number(moveForward) - Number(moveBackward);
-            direction.x = Number(moveRight) - Number(moveLeft);
-            direction.normalize();
-            
-            if (moveForward || moveBackward) velocity.z -= direction.z * 20.0 * delta;
-            if (moveLeft || moveRight) velocity.x -= direction.x * 20.0 * delta;
-            
-            // 应用移动到玩家
-            player.translateX(velocity.x * delta);
-            player.translateZ(velocity.z * delta);
-            player.position.y += velocity.y * delta;
-            
-            // 简单的地面碰撞检测
-            if (player.position.y < 1.8) {
-                player.position.y = 1.8;
-                velocity.y = 0;
-                canJump = true;
-            }
-            
-            // 保持玩家在边界内
-            player.position.x = Math.max(-45, Math.min(45, player.position.x));
-            player.position.z = Math.max(-45, Math.min(45, player.position.z));
-            
-            // 更新相机跟随玩家
-            camera.position.x = player.position.x;
-            camera.position.z = player.position.z + 8; // 在玩家后方
-            camera.position.y = player.position.y + 5; // 在玩家上方
-            camera.lookAt(player.position.x, player.position.y, player.position.z);
-            
-            // 渲染场景
-            renderer.render(scene, camera);
-        }
-
-        // 更新UI
-        function updateUI() {
-            if (!gameState.gameStarted) return;
-            
-            // 更新玩家位置显示
-            if (elements.playerPosition) {
-                elements.playerPosition.textContent = `Position: ${player.position.x.toFixed(1)}, ${player.position.y.toFixed(1)}, ${player.position.z.toFixed(1)}`;
-            }
-            
-            // 更新FPS
-            gameState.frameCount++;
-            gameState.lastUpdate += clock.getDelta();
-            
-            if (gameState.lastUpdate > 0.5) { // 每0.5秒更新一次
-                gameState.fps = Math.round(gameState.frameCount / gameState.lastUpdate);
-                if (elements.fpsCounter) {
-                    elements.fpsCounter.textContent = `FPS: ${gameState.fps}`;
-                }
-                
-                gameState.frameCount = 0;
-                gameState.lastUpdate = 0;
-            }
-            
-            // 继续更新UI
-            setTimeout(updateUI, 1000);
-        }
-
-        // 键盘按下事件
-        function onKeyDown(event) {
-            switch (event.code) {
-                case 'ArrowUp':
-                case 'KeyW':
-                    moveForward = true;
-                    break;
-                case 'ArrowLeft':
-                case 'KeyA':
-                    moveLeft = true;
-                    break;
-                case 'ArrowDown':
-                case 'KeyS':
-                    moveBackward = true;
-                    break;
-                case 'ArrowRight':
-                case 'KeyD':
-                    moveRight = true;
-                    break;
-                case 'Space':
-                    if (canJump) velocity.y = 8;
-                    canJump = false;
-                    break;
-            }
-        }
-
-        // 键盘释放事件
-        function onKeyUp(event) {
-            switch (event.code) {
-                case 'ArrowUp':
-                case 'KeyW':
-                    moveForward = false;
-                    break;
-                case 'ArrowLeft':
-                case 'KeyA':
-                    moveLeft = false;
-                    break;
-                case 'ArrowDown':
-                case 'KeyS':
-                    moveBackward = false;
-                    break;
-                case 'ArrowRight':
-                case 'KeyD':
-                    moveRight = false;
-                    break;
-            }
-        }
-
-        // 鼠标按下事件
-        function onMouseDown(event) {
-            if (!gameState.gameStarted || gameState.gamePaused) return;
-            
-            if (event.button === 0) { // 左键 - 破坏方块
-                handleBlockInteraction('break');
-            } else if (event.button === 2) { // 右键 - 放置方块
-                handleBlockInteraction('place');
-            }
-        }
-
-        // 鼠标移动事件
-        function onMouseMove(event) {
-            if (!gameState.gameStarted || gameState.gamePaused) return;
-            
-            // 计算鼠标位置
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        }
-
-        // 处理方块交互
-        function handleBlockInteraction(action) {
-            // 使用射线检测来找到玩家看的方块
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(worldBlocks);
-            
-            if (intersects.length > 0) {
-                const intersect = intersects[0];
-                
-                if (action === 'break') {
-                    // 移除方块
-                    scene.remove(intersect.object);
-                    worldBlocks = worldBlocks.filter(block => block !== intersect.object);
-                } else if (action === 'place') {
-                    // 在交点附近放置新方块
-                    const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
-                    const blockMaterial = new THREE.MeshStandardMaterial({ 
-                        color: Math.random() * 0xffffff // 随机颜色
-                    });
-                    const newBlock = new THREE.Mesh(blockGeometry, blockMaterial);
-                    
-                    // 计算新方块位置（在交点附近）
-                    newBlock.position.copy(intersect.point).add(intersect.face.normal);
-                    newBlock.position.divideScalar(1).floor().addScalar(0.5); // 对齐到网格
-                    
-                    scene.add(newBlock);
-                    worldBlocks.push(newBlock);
-                }
-            }
-        }
-
-        // 显示指定屏幕
-        function showScreen(screenName) {
-            // 隐藏所有屏幕
-            elements.loadingScreen.style.display = 'none';
-            elements.mainMenu.style.display = 'none';
-            elements.settingsMenu.style.display = 'none';
-            elements.multiplayerMenu.style.display = 'none';
-            elements.inGameUI.style.display = 'none';
-            elements.pauseMenu.style.display = 'none';
-            
-            // 显示请求的屏幕
-            elements[screenName].style.display = 'block';
-            gameState.currentScreen = screenName;
-        }
-
-        // 暂停游戏
-        function pauseGame() {
-            gameState.gamePaused = true;
-            elements.pauseMenu.style.display = 'block';
-        }
-
-        // 恢复游戏
-        function resumeGame() {
-            gameState.gamePaused = false;
-            elements.pauseMenu.style.display = 'none';
-        }
-
-        // 返回主菜单
-        function returnToMainMenu() {
-            gameState.gameStarted = false;
-            gameState.gamePaused = false;
-            
-            if (renderer) {
-                renderer.setAnimationLoop(null); // 停止动画循环
-            }
-            
-            // 隐藏游戏界面
-            elements.inGameUI.style.display = 'none';
-            elements.mobileControls.style.display = 'none';
-            
-            // 显示主菜单
-            showScreen('mainMenu');
-            
-            // 重置游戏状态
-            gameState.playerHealth = 100;
-        }
-
-        // 窗口大小调整
-        window.addEventListener('resize', () => {
-            if (camera && renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        });
-
-        // 阻止鼠标右键菜单
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // 初始化游戏
-        window.addEventListener('load', init);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

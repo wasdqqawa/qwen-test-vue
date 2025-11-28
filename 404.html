@@ -1,44 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <title>Page Not Found - Web MC</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: white;
-            font-family: 'Minecraft', 'Courier New', Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            font-size: 4em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-        }
-        p {
-            font-size: 1.5em;
-            margin-bottom: 30px;
-        }
-        a {
-            color: #4CAF50;
-            text-decoration: none;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            border: 2px solid #4CAF50;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        a:hover {
-            background: #4CAF50;
-            color: white;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万能工具箱</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>404</h1>
-    <p>Oops! The block you're looking for doesn't exist.</p>
-    <p>Maybe it was mined by another player!</p>
-    <a href="./">Return to Main Menu</a>
+    <div class="container">
+        <header>
+            <h1>万能工具箱</h1>
+            <p>一个简洁实用的多功能工具集合</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="/">首页</a></li>
+                <li><a href="/#calculator">计算器</a></li>
+                <li><a href="/#converter">单位转换</a></li>
+                <li><a href="/#text-tools">文本工具</a></li>
+                <li><a href="/#color-picker">颜色选择器</a></li>
+                <li><a href="/#qrcode">二维码生成</a></li>
+                <li><a href="/#password">密码生成</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section class="tool-section">
+                <h2>页面未找到</h2>
+                <p>抱歉，您访问的页面不存在。</p>
+                <p><a href="/">返回首页</a></p>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // 重定向到主页
+        setTimeout(function() {
+            window.location.href = '/';
+        }, 3000);
+    </script>
 </body>
 </html>

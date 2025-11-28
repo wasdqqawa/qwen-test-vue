@@ -1,0 +1,263 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    background: #000;
+    color: white;
+    height: 100vh;
+    width: 100vw;
+}
+
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    z-index: 100;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.loading-container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    border: 2px solid #4cc9f0;
+}
+
+.loading-bar {
+    width: 300px;
+    height: 20px;
+    background: #333;
+    border-radius: 10px;
+    margin: 20px auto;
+    overflow: hidden;
+    border: 1px solid #555;
+}
+
+.loading-progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4cc9f0, #4361ee);
+    transition: width 0.3s ease;
+}
+
+.menu-container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border-radius: 15px;
+    border: 2px solid #4361ee;
+    box-shadow: 0 0 20px rgba(67, 97, 238, 0.5);
+    min-width: 400px;
+}
+
+.menu-container h1 {
+    color: #4cc9f0;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.7);
+}
+
+.menu-container h2 {
+    color: #4cc9f0;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+.menu-btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px auto;
+    padding: 15px;
+    font-size: 1.2em;
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-btn:hover {
+    background: linear-gradient(135deg, #4cc9f0, #4361ee);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+}
+
+.settings-option {
+    margin: 15px 0;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-option label {
+    color: #f72585;
+    font-weight: bold;
+    width: 120px;
+}
+
+.settings-option select,
+.settings-option input[type="range"] {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #4361ee;
+    background: #2d3748;
+    color: white;
+    width: 150px;
+}
+
+.settings-controls {
+    margin-top: 30px;
+}
+
+#gameContainer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#gameUI {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#healthBar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 200px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #4361ee;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+#healthFill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #f72585, #b5179e);
+    transition: width 0.3s ease;
+}
+
+#healthText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+#fpsCounter {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-family: monospace;
+    border: 1px solid #4361ee;
+}
+
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+#crosshair::before,
+#crosshair::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#crosshair::before {
+    width: 2px;
+    height: 100%;
+    left: 9px;
+}
+
+#crosshair::after {
+    width: 100%;
+    height: 2px;
+    top: 9px;
+}
+
+#pauseMenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+/* Desktop-specific styles - no mobile UI elements */
+@media (max-width: 768px) {
+    .menu-container {
+        width: 90%;
+        padding: 20px;
+    }
+    
+    .menu-btn {
+        max-width: 100%;
+    }
+    
+    .settings-option {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .settings-option label {
+        margin-bottom: 5px;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+    .menu-btn {
+        font-size: 1.1em;
+        padding: 12px 24px;
+    }
+}

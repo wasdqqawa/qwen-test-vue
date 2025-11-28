@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Adventure Game - Three.js</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="screen">
+        <div class="loading-container">
+            <h1>3D Adventure Game</h1>
+            <div class="loading-bar">
+                <div id="loadingProgress" class="loading-progress"></div>
+            </div>
+            <p>Loading assets...</p>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="mainMenu" class="screen hidden">
+        <div class="menu-container">
+            <h1>3D Adventure Game</h1>
+            <button id="singlePlayerBtn" class="menu-btn">Single Player</button>
+            <button id="multiplayerBtn" class="menu-btn">Multiplayer</button>
+            <button id="settingsBtn" class="menu-btn">Settings</button>
+            <button id="quitBtn" class="menu-btn">Quit</button>
+        </div>
+    </div>
+
+    <!-- Settings Menu -->
+    <div id="settingsMenu" class="screen hidden">
+        <div class="menu-container">
+            <h2>Settings</h2>
+            <div class="settings-option">
+                <label for="resolution">Resolution:</label>
+                <select id="resolution">
+                    <option value="720">1280x720</option>
+                    <option value="1080" selected>1920x1080</option>
+                    <option value="1440">2560x1440</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label for="quality">Quality:</label>
+                <select id="quality">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label for="volume">Volume:</label>
+                <input type="range" id="volume" min="0" max="100" value="50">
+            </div>
+            <div class="settings-controls">
+                <button id="backToMainBtn" class="menu-btn">Back to Main</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen hidden">
+        <div id="gameContainer">
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- Game UI -->
+            <div id="gameUI">
+                <div id="healthBar">
+                    <div id="healthFill"></div>
+                    <span id="healthText">100%</span>
+                </div>
+                <div id="fpsCounter">FPS: 0</div>
+                <div id="crosshair"></div>
+            </div>
+            
+            <!-- Pause Menu -->
+            <div id="pauseMenu" class="hidden">
+                <div class="menu-container">
+                    <h2>Game Paused</h2>
+                    <button id="resumeBtn" class="menu-btn">Resume</button>
+                    <button id="pauseSettingsBtn" class="menu-btn">Settings</button>
+                    <button id="returnToMainBtn" class="menu-btn">Main Menu</button>
+                    <button id="quitGameBtn" class="menu-btn">Quit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

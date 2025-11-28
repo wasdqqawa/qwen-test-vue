@@ -143,7 +143,7 @@ function toBaseUnit(value, unit, type) {
                 case 'mm': return value / 1000;
                 case 'cm': return value / 100;
                 case 'm': return value;
-                case 'km': return value * 1000;
+                case 'km': return value * 1000; // 1 km = 1000 m
                 case 'in': return value * 0.0254;
                 case 'ft': return value * 0.3048;
                 case 'yd': return value * 0.9144;
@@ -307,38 +307,15 @@ function generateQRCode() {
     // 清空之前的结果
     qrDisplay.innerHTML = '';
     
-    // 创建canvas元素用于显示二维码
-    const canvas = document.createElement('canvas');
-    qrDisplay.appendChild(canvas);
+    // 创建一个img元素来显示二维码
+    // 使用在线API生成二维码
+    const img = document.createElement('img');
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+    img.alt = '二维码';
+    img.style.width = '200px';
+    img.style.height = '200px';
     
-    // 使用Canvas API生成二维码（这里使用简化的实现）
-    // 实际部署时，可以引入qrcode.js库来生成
-    try {
-        // 简化的二维码生成实现
-        const ctx = canvas.getContext('2d');
-        canvas.width = 200;
-        canvas.height = 200;
-        
-        // 绘制背景
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 200, 200);
-        
-        // 绘制边框
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(0, 0, 200, 200);
-        
-        // 显示文本提示
-        ctx.fillStyle = '#000000';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('二维码内容: ' + text.substring(0, 20) + (text.length > 20 ? '...' : ''), 100, 100);
-        
-        // 在实际部署时，可以使用CDN引入qrcode.js库
-        // 这里提供一个简化版本以确保功能可用
-    } catch (error) {
-        qrDisplay.innerHTML = '<p>生成二维码失败</p>';
-    }
+    qrDisplay.appendChild(img);
 }
 
 // 密码生成器功能
@@ -371,20 +348,58 @@ function generatePassword() {
 
 function copyPassword() {
     const passwordField = document.getElementById('generated-password');
+    if (!passwordField.value) {
+        alert('请先生成密码');
+        return;
+    }
+    
+    // 使用现代Clipboard API，如果不可用则回退到旧方法
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(passwordField.value).then(() => {
+            // 显示复制成功提示
+            const copyButton = document.querySelector('#password button[onclick="copyPassword()"]');
+            if (copyButton) {
+                const originalText = copyButton.textContent;
+                copyButton.textContent = '已复制';
+                setTimeout(() => {
+                    copyButton.textContent = originalText;
+                }, 2000);
+            }
+        }).catch(err => {
+            console.error('复制失败:', err);
+            // 回退到旧方法
+            fallbackCopyTextToClipboard(passwordField);
+        });
+    } else {
+        // 回退到旧方法
+        fallbackCopyTextToClipboard(passwordField);
+    }
+}
+
+// 旧的复制方法作为回退
+function fallbackCopyTextToClipboard(passwordField) {
     passwordField.select();
     document.execCommand('copy');
     
     // 显示复制成功提示
-    const originalText = passwordField.nextElementSibling.textContent;
-    passwordField.nextElementSibling.textContent = '已复制';
-    setTimeout(() => {
-        passwordField.nextElementSibling.textContent = '复制';
-    }, 2000);
+    const copyButton = document.querySelector('#password button[onclick="copyPassword()"]');
+    if (copyButton) {
+        const originalText = copyButton.textContent;
+        copyButton.textContent = '已复制';
+        setTimeout(() => {
+            copyButton.textContent = originalText;
+        }, 2000);
+    }
 }
 
 // 添加回车键支持到计算器
-document.getElementById('calc-display').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        calculate();
+document.addEventListener('DOMContentLoaded', function() {
+    const calcDisplay = document.getElementById('calc-display');
+    if (calcDisplay) {
+        calcDisplay.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
     }
 });
